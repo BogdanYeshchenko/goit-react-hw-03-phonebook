@@ -8,6 +8,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const { Component } = require('react');
 
+const KEY_LOCAL_St_CONTACTS = 'contacts';
+
 // model.id = nanoid();
 
 class PhoneBook extends Component {
@@ -20,6 +22,27 @@ class PhoneBook extends Component {
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    const contactsFromLocalSt = JSON.parse(
+      localStorage.getItem(KEY_LOCAL_St_CONTACTS)
+    );
+    if (contactsFromLocalSt) {
+      this.setState(prev => ({
+        contacts: contactsFromLocalSt,
+      }));
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const isContactsUpdate =
+      this.state.contacts.length !== prevState.contacts.length;
+    const contactsJson = JSON.stringify(this.state.contacts);
+
+    if (isContactsUpdate) {
+      localStorage.setItem(KEY_LOCAL_St_CONTACTS, contactsJson);
+    }
+  }
 
   handleAddNewContact = value => {
     const isNewContactNew = this.state.contacts.find(
